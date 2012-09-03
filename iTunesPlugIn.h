@@ -92,28 +92,15 @@ struct BPPluginData;
 struct BPPluginData
 {
 	void *				appCookie;
-	ITAppProcPtr		appProc;
+	ITAppProcPtr			appProc;
 
-#if TARGET_OS_MAC
-	NSView*				destView;
-	NSRect				destRect;
-	#if USE_SUBVIEW
-	VisualView*			subview;								// custom subview
-	#endif
-	NSImage *			currentArtwork;
-#else
-	HWND				destView;
-	RECT				destRect;
-	Gdiplus::Bitmap* 	currentArtwork;
-	long int			lastDrawTime;
-#endif
 	OptionBits			destOptions;
 
-	RenderVisualData	renderData;
+	RenderVisualData		renderData;
 	UInt32				renderTimeStampID;
-	
+
 	ITTrackInfo			trackInfo;
-	ITStreamInfo		streamInfo;
+	ITStreamInfo			streamInfo;
 
 	// Plugin-specific data
 
@@ -122,8 +109,6 @@ struct BPPluginData
 
 	time_t				drawInfoTimeOut;						// when should we stop showing info/artwork?
 
-	UInt8				minLevel[kVisualMaxDataChannels];		// 0-128
-	UInt8				maxLevel[kVisualMaxDataChannels];		// 0-128
 };
 typedef struct BPPluginData BPPluginData;
 
@@ -131,21 +116,11 @@ void		GetVisualName( ITUniStr255 name );
 OptionBits	GetVisualOptions( void );
 OSStatus	RegisterVisualPlugin( PluginMessageInfo * messageInfo );
 
-OSStatus	ActivateVisual( BPPluginData * bpPluginData, VISUAL_PLATFORM_VIEW destView, OptionBits options );
-OSStatus	MoveVisual( BPPluginData * bpPluginData, OptionBits newOptions );
-OSStatus	DeactivateVisual( BPPluginData * bpPluginData );
-OSStatus	ResizeVisual( BPPluginData * bpPluginData );
-
 void		ProcessRenderData( BPPluginData * bpPluginData, UInt32 timeStampID, const RenderVisualData * renderData );
-void		ResetRenderData( BPPluginData * bpPluginData );
 void		UpdateInfoTimeOut( BPPluginData * bpPluginData );
 void		UpdateTrackInfo( BPPluginData * bpPluginData, ITTrackInfo * trackInfo, ITStreamInfo * streamInfo );
 void		UpdateArtwork( BPPluginData * bpPluginData, VISUAL_PLATFORM_DATA coverArt, UInt32 coverArtSize, UInt32 coverArtFormat );
 void		UpdatePulseRate( BPPluginData * bpPluginData, UInt32 * ioPulseRate );
-
-void		DrawVisual( BPPluginData * bpPluginData );
-void		PulseVisual( BPPluginData * bpPluginData, UInt32 timeStampID, const RenderVisualData * renderData, UInt32 * ioPulseRate );
-void		InvalidateVisual( BPPluginData * bpPluginData );
 
 OSStatus	ConfigureVisual( BPPluginData * bpPluginData );
 

@@ -62,55 +62,6 @@ typedef struct BPStruct {
 } BPStruct;
 
 //-------------------------------------------------------------------------------------------------
-// ProcessRenderData
-//-------------------------------------------------------------------------------------------------
-//
-void ProcessRenderData( BPPluginData * bpPluginData, UInt32 timeStampID, const RenderVisualData * renderData )
-{
-	SInt16		index;
-	SInt32		channel;
-
-	bpPluginData->renderTimeStampID	= timeStampID;
-
-	if ( renderData == NULL )
-	{
-		memset( &bpPluginData->renderData, 0, sizeof(bpPluginData->renderData) );
-		return;
-	}
-
-	bpPluginData->renderData = *renderData;
-	
-	for ( channel = 0;channel < renderData->numSpectrumChannels; channel++ )
-	{
-		bpPluginData->minLevel[channel] = 
-			bpPluginData->maxLevel[channel] = 
-			renderData->spectrumData[channel][0];
-
-		for ( index = 1; index < kVisualNumSpectrumEntries; index++ )
-		{
-			UInt8		value;
-			
-			value = renderData->spectrumData[channel][index];
-
-			if ( value < bpPluginData->minLevel[channel] )
-				bpPluginData->minLevel[channel] = value;
-			else if ( value > bpPluginData->maxLevel[channel] )
-				bpPluginData->maxLevel[channel] = value;
-		}
-	}
-}
-
-//-------------------------------------------------------------------------------------------------
-//	ResetRenderData
-//-------------------------------------------------------------------------------------------------
-//
-void ResetRenderData( BPPluginData * bpPluginData )
-{
-	memset( &bpPluginData->renderData, 0, sizeof(bpPluginData->renderData) );
-	memset( bpPluginData->minLevel, 0, sizeof(bpPluginData->minLevel) );
-}
-
-//-------------------------------------------------------------------------------------------------
 //	UpdateInfoTimeOut
 //-------------------------------------------------------------------------------------------------
 //
@@ -160,6 +111,7 @@ void UpdateTrackInfo( BPStruct *bpData, ITTrackInfo * trackInfo, ITStreamInfo * 
 	}
 
 	UpdateInfoTimeOut( bpPluginData );
+#ifdef DEBUG
 	{ wchar_t fName[257];
 		wmemcpy( (wchar_t*) fName, &((wchar_t*) trackInfo->fileName)[1], trackInfo->fileName[0] );
 		fName[trackInfo->fileName[0]] = fName[255] = 0;
@@ -169,34 +121,7 @@ void UpdateTrackInfo( BPStruct *bpData, ITTrackInfo * trackInfo, ITStreamInfo * 
 			 ((double)trackInfo->totalTimeInMS)/1000.0, trackInfo->sizeInBytes
 		);
 	}
-}
-
-//-------------------------------------------------------------------------------------------------
-//	RequestArtwork
-//-------------------------------------------------------------------------------------------------
-//
-static void RequestArtwork( BPPluginData * bpPluginData )
-{
-	// only request artwork if this plugin is active
-	if ( bpPluginData->destView != NULL )
-	{
-		OSStatus		status;
-
-		status = PlayerRequestCurrentTrackCoverArt( bpPluginData->appCookie, bpPluginData->appProc );
-	}
-}
-
-//-------------------------------------------------------------------------------------------------
-//	PulseVisual
-//-------------------------------------------------------------------------------------------------
-//
-void PulseVisual( BPPluginData * bpPluginData, UInt32 timeStampID, const RenderVisualData * renderData, UInt32 * ioPulseRate )
-{
-	// update internal state
-	ProcessRenderData( bpPluginData, timeStampID, renderData );
-
-	// if desired, adjust the pulse rate
-	UpdatePulseRate( bpPluginData, ioPulseRate );
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -242,7 +167,6 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			bpData->defaultADevice = GetDefaultDevice( false, status );
 
 			messageInfo->u.initMessage.refCon = (void *)bpData;
-			CFLog( "kVisualPluginInitMessage" );
 			break;
 		}
 		/*
@@ -261,7 +185,9 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			loaded visual plugins at launch.  The plugin should not do anything here.
 		*/
 		case kVisualPluginEnableMessage:
+#ifdef DEBUG
 			CFLog( "kVisualPluginEnableMessage" );
+#endif
 			break;
 		case kVisualPluginDisableMessage:{
 			CFLog( "kVisualPluginDisableMessage" );
@@ -281,7 +207,6 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			the kVisualWantsConfigure option in the RegisterVisualMessage.options field.
 		*/
 		case kVisualPluginConfigureMessage:{
-//			status = ConfigureVisual( bpPluginData );
 			break;
 		}
 		/*
@@ -289,13 +214,7 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			point, the plugin should allocate any large buffers it needs.
 		*/
 		case kVisualPluginActivateMessage:{
-//			status = ActivateVisual( bpPluginData, messageInfo->u.activateMessage.view, messageInfo->u.activateMessage.options );
-//
-//			// note: do not draw here if you can avoid it, a draw message will be sent as soon as possible
-//			
-//			if( status == noErr )
-//				RequestArtwork( bpPluginData );
-//			break;
+			break;
 		}	
 		/*
 			Sent when this visual is no longer displayed.
@@ -304,23 +223,19 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			UpdateTrackInfo( bpData, NULL, NULL );
 			CFLog( "kVisualPluginDeactivateMessage" );
 
-//			status = DeactivateVisual( bpPluginData );
 			break;
 		}
 		/*
 			Sent when iTunes is moving the destination view to a new parent window (e.g. to/from fullscreen).
 		*/
 		case kVisualPluginWindowChangedMessage:{
-//			status = MoveVisual( bpPluginData, messageInfo->u.windowChangedMessage.options );
 			break;
 		}
 		/*
 			Sent when iTunes has changed the rectangle of the currently displayed visual.
-			
 			Note: for custom NSView subviews, the subview's frame is automatically resized.
 		*/
 		case kVisualPluginFrameChangedMessage:{
-//			status = ResizeVisual( bpPluginData );
 			break;
 		}
 		/*
@@ -332,12 +247,6 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			will be limited to the system refresh rate.
 		*/
 		case kVisualPluginPulseMessage:{
-//			PulseVisual( bpPluginData,
-//						 messageInfo->u.pulseMessage.timeStampID,
-//						 messageInfo->u.pulseMessage.renderData,
-//						 &messageInfo->u.pulseMessage.newPulseRateInHz );
-//
-//			InvalidateVisual( bpPluginData );
 			break;
 		}
 		/*
@@ -348,9 +257,6 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			is set up properly.
 		*/
 		case kVisualPluginDrawMessage:{
-#if !USE_SUBVIEW
-			DrawVisual( bpPluginData );
-#endif
 			break;
 		}
 		/*
@@ -364,9 +270,6 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 
 			UpdateTrackInfo( bpData, messageInfo->u.playMessage.trackInfo, messageInfo->u.playMessage.streamInfo );
 		
-//			RequestArtwork( bpPluginData );
-//			
-//			InvalidateVisual( bpPluginData );
 			break;
 		}
 		/*
@@ -376,23 +279,13 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 		case kVisualPluginChangeTrackMessage:{
 			UpdateTrackInfo( bpData, messageInfo->u.changeTrackMessage.trackInfo, messageInfo->u.changeTrackMessage.streamInfo );
 
-//			RequestArtwork( bpPluginData );
-//
-//			InvalidateVisual( bpPluginData );
 			break;
 		}
 		/*
 			Artwork for the currently playing song is being delivered per a previous request.
-			
 			Note that NULL for messageInfo->u.coverArtMessage.coverArt means the currently playing song has no artwork.
 		*/
 		case kVisualPluginCoverArtMessage:{
-//			UpdateArtwork(	bpPluginData,
-//							messageInfo->u.coverArtMessage.coverArt,
-//							messageInfo->u.coverArtMessage.coverArtSize,
-//							messageInfo->u.coverArtMessage.coverArtFormat );
-//			
-//			InvalidateVisual( bpPluginData );
 			break;
 		}
 		/*
@@ -401,9 +294,6 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 		case kVisualPluginStopMessage:{
 			bpPluginData->playing = false;
 			
-//			ResetRenderData( bpPluginData );
-//
-//			InvalidateVisual( bpPluginData );
 			if( bpData->defaultADevice ){
 				bpData->defaultADevice->ResetNominalSampleRate();
 				// reopen the default device if it has changed in the meantime:

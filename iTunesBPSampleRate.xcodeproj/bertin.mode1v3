@@ -235,10 +235,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D632248A15F5315100959450</string>
+						<string>D6AB405915F575ED00CE552C</string>
 						<key>history</key>
 						<array>
-							<string>D632247015F5301C00959450</string>
+							<string>D6AB400715F56D4900CE552C</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -261,7 +261,7 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>D632246515F52F2A00959450</string>
+				<string>D6AB404915F573F100CE552C</string>
 				<key>PBXProjectModuleLabel</key>
 				<string>AudioDevice.h</string>
 				<key>PBXSplitModuleInNavigatorKey</key>
@@ -269,16 +269,16 @@
 					<key>Split0</key>
 					<dict>
 						<key>PBXProjectModuleGUID</key>
-						<string>D632246615F52F2A00959450</string>
+						<string>D6AB404A15F573F100CE552C</string>
 						<key>PBXProjectModuleLabel</key>
 						<string>AudioDevice.h</string>
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D632248B15F5315100959450</string>
+						<string>D6AB405A15F575ED00CE552C</string>
 						<key>history</key>
 						<array>
-							<string>D632246715F52F2A00959450</string>
+							<string>D6AB404B15F573F100CE552C</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -315,10 +315,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D632248C15F5315100959450</string>
+						<string>D6AB405B15F575ED00CE552C</string>
 						<key>history</key>
 						<array>
-							<string>D63223C415F521C200959450</string>
+							<string>D6AB403015F570E500CE552C</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -355,10 +355,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D632248D15F5315100959450</string>
+						<string>D6AB405C15F575ED00CE552C</string>
 						<key>history</key>
 						<array>
-							<string>D63223DA15F5243000959450</string>
+							<string>D6AB401315F56F0E00CE552C</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -395,10 +395,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D632248E15F5315100959450</string>
+						<string>D6AB405D15F575ED00CE552C</string>
 						<key>history</key>
 						<array>
-							<string>D63223CE15F5227300959450</string>
+							<string>D6AB3FD215F5692200CE552C</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -489,6 +489,7 @@
 								<string>089C166AFE841209C02AAC07</string>
 								<string>08FB77AFFE84173DC02AAC07</string>
 								<string>01285C0000CC31B17F000001</string>
+								<string>089C167CFE841241C02AAC07</string>
 								<string>19C28FB6FE9D52B211CA2CBB</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -496,6 +497,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -600,9 +602,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D632236115F51E1800959450</string>
+				<string>D6AB3FFD15F56C3C00CE552C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D632236215F51E1800959450</string>
+				<string>D6AB3FFE15F56C3C00CE552C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -723,7 +725,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>368390481.109761</real>
+	<real>368408045.10103399</real>
 	<key>ToolbarConfigUserDefaultsMinorVersion</key>
 	<string>2</string>
 	<key>ToolbarDisplayMode</key>
@@ -740,13 +742,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>D64DB2D21591217700B5FB54</string>
 		<string>D63223CC15F5227300959450</string>
 		<string>D63223D815F5243000959450</string>
 		<string>D63223C915F5227300959450</string>
-		<string>D632246515F52F2A00959450</string>
 		<string>/Volumes/Debian/Users/bertin/work/src/MacOSX/iTunesBPSampleRate/iTunesBPSampleRate.xcodeproj</string>
+		<string>D6AB404915F573F100CE552C</string>
 		<string>D63223E715F524CF00959450</string>
 	</array>
 	<key>WindowString</key>
@@ -829,7 +830,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D64DB2D21591217700B5FB54</string>
-				<string>D632232015F50A4600959450</string>
+				<string>D6AB400415F56C3C00CE552C</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

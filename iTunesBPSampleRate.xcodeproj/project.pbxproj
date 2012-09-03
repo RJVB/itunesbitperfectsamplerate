@@ -19,7 +19,6 @@
 		DC2667990BD9410900B4ED68 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		DC26679A0BD9410900B4ED68 /* ReadMe.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 0103924500CE94127F000001 /* ReadMe.rtf */; };
 		DC26679C0BD9410900B4ED68 /* iTunesPlugInMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 01285C0700CC38597F000001 /* iTunesPlugInMac.mm */; };
-		DC61BBEB13CBD871008AD92E /* ConfigurePanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC61BBE913CBD871008AD92E /* ConfigurePanel.xib */; };
 		DC8CE6DF13A31B4500963E07 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC8CE6DE13A31B4500963E07 /* Cocoa.framework */; };
 		DC8CE75A13A34EB500963E07 /* iTunesPlugIn.h in Headers */ = {isa = PBXBuildFile; fileRef = DC8CE75913A34EB500963E07 /* iTunesPlugIn.h */; };
 /* End PBXBuildFile section */
@@ -40,7 +39,6 @@
 		D6B2A50415F3D846007510B7 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		DC13014413AB3AB40013DDA5 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		DC2667A60BD9410900B4ED68 /* iTunes BitPerfect SampleRate.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "iTunes BitPerfect SampleRate.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
-		DC61BBEA13CBD871008AD92E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/ConfigurePanel.xib; sourceTree = "<group>"; };
 		DC8CE6DE13A31B4500963E07 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		DC8CE75913A34EB500963E07 /* iTunesPlugIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iTunesPlugIn.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -93,7 +91,6 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DC61BBE913CBD871008AD92E /* ConfigurePanel.xib */,
 				AF289ABC0CDFDCF200C8C0B4 /* iTunes_Visualizer-Info.plist */,
 				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
 			);
@@ -191,7 +188,6 @@
 			files = (
 				DC2667990BD9410900B4ED68 /* InfoPlist.strings in Resources */,
 				DC26679A0BD9410900B4ED68 /* ReadMe.rtf in Resources */,
-				DC61BBEB13CBD871008AD92E /* ConfigurePanel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,14 +215,6 @@
 				089C167EFE841241C02AAC07 /* English */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		DC61BBE913CBD871008AD92E /* ConfigurePanel.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				DC61BBEA13CBD871008AD92E /* English */,
-			);
-			name = ConfigurePanel.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

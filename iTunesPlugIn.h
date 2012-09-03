@@ -71,7 +71,7 @@
 #define	kTVisualPluginReleaseStage		developStage
 #define	kTVisualPluginNonFinalRelease	0
 
-struct VisualPluginData;
+struct BPPluginData;
 
 #if TARGET_OS_MAC
 #import <Cocoa/Cocoa.h>
@@ -89,7 +89,7 @@ struct VisualPluginData;
 #define kPlayingPulseRateInHz		10							// when iTunes is playing, draw N times a second
 #define kStoppedPulseRateInHz		5							// when iTunes is not playing, draw N times a second
 
-struct VisualPluginData
+struct BPPluginData
 {
 	void *				appCookie;
 	ITAppProcPtr		appProc;
@@ -125,29 +125,29 @@ struct VisualPluginData
 	UInt8				minLevel[kVisualMaxDataChannels];		// 0-128
 	UInt8				maxLevel[kVisualMaxDataChannels];		// 0-128
 };
-typedef struct VisualPluginData VisualPluginData;
+typedef struct BPPluginData BPPluginData;
 
 void		GetVisualName( ITUniStr255 name );
 OptionBits	GetVisualOptions( void );
 OSStatus	RegisterVisualPlugin( PluginMessageInfo * messageInfo );
 
-OSStatus	ActivateVisual( VisualPluginData * visualPluginData, VISUAL_PLATFORM_VIEW destView, OptionBits options );
-OSStatus	MoveVisual( VisualPluginData * visualPluginData, OptionBits newOptions );
-OSStatus	DeactivateVisual( VisualPluginData * visualPluginData );
-OSStatus	ResizeVisual( VisualPluginData * visualPluginData );
+OSStatus	ActivateVisual( BPPluginData * bpPluginData, VISUAL_PLATFORM_VIEW destView, OptionBits options );
+OSStatus	MoveVisual( BPPluginData * bpPluginData, OptionBits newOptions );
+OSStatus	DeactivateVisual( BPPluginData * bpPluginData );
+OSStatus	ResizeVisual( BPPluginData * bpPluginData );
 
-void		ProcessRenderData( VisualPluginData * visualPluginData, UInt32 timeStampID, const RenderVisualData * renderData );
-void		ResetRenderData( VisualPluginData * visualPluginData );
-void		UpdateInfoTimeOut( VisualPluginData * visualPluginData );
-void		UpdateTrackInfo( VisualPluginData * visualPluginData, ITTrackInfo * trackInfo, ITStreamInfo * streamInfo );
-void		UpdateArtwork( VisualPluginData * visualPluginData, VISUAL_PLATFORM_DATA coverArt, UInt32 coverArtSize, UInt32 coverArtFormat );
-void		UpdatePulseRate( VisualPluginData * visualPluginData, UInt32 * ioPulseRate );
+void		ProcessRenderData( BPPluginData * bpPluginData, UInt32 timeStampID, const RenderVisualData * renderData );
+void		ResetRenderData( BPPluginData * bpPluginData );
+void		UpdateInfoTimeOut( BPPluginData * bpPluginData );
+void		UpdateTrackInfo( BPPluginData * bpPluginData, ITTrackInfo * trackInfo, ITStreamInfo * streamInfo );
+void		UpdateArtwork( BPPluginData * bpPluginData, VISUAL_PLATFORM_DATA coverArt, UInt32 coverArtSize, UInt32 coverArtFormat );
+void		UpdatePulseRate( BPPluginData * bpPluginData, UInt32 * ioPulseRate );
 
-void		DrawVisual( VisualPluginData * visualPluginData );
-void		PulseVisual( VisualPluginData * visualPluginData, UInt32 timeStampID, const RenderVisualData * renderData, UInt32 * ioPulseRate );
-void		InvalidateVisual( VisualPluginData * visualPluginData );
+void		DrawVisual( BPPluginData * bpPluginData );
+void		PulseVisual( BPPluginData * bpPluginData, UInt32 timeStampID, const RenderVisualData * renderData, UInt32 * ioPulseRate );
+void		InvalidateVisual( BPPluginData * bpPluginData );
 
-OSStatus	ConfigureVisual( VisualPluginData * visualPluginData );
+OSStatus	ConfigureVisual( BPPluginData * bpPluginData );
 
 void		CFLog( const char *format, ... );
 

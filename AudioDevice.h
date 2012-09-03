@@ -62,8 +62,8 @@ public:
 
 	void	SetBufferSize(UInt32 size);
 	OSStatus NominalSampleRate(Float64 &sampleRate);
-	OSStatus SetNominalSampleRate(Float64 sampleRate);
-	OSStatus ResetNominalSampleRate();
+	OSStatus SetNominalSampleRate(Float64 sampleRate, Boolean force=false);
+	OSStatus ResetNominalSampleRate(Boolean force=false);
 	OSStatus SetStreamBasicDescription(AudioStreamBasicDescription *desc);
 	int		CountChannels();
 	char *	GetName(char *buf, UInt32 maxlen);
@@ -71,6 +71,9 @@ protected:
 	AudioStreamBasicDescription		mInitialFormat;
 	AudioDevicePropertyListenerProc	listenerProc;
 	Float64						currentNominalSR;
+	Float64						minNominalSR, maxNominalSR;
+	UInt32						nominalSampleRates;
+	AudioValueRange				*nominalSampleRateList;
 public:
 	const AudioDeviceID				mID;
 	const bool					mIsInput;
@@ -80,6 +83,6 @@ public:
 };
 
 
-AudioDevice *GetDefaultDevice(Boolean isInput, OSStatus &err);
+AudioDevice *GetDefaultDevice(Boolean isInput, OSStatus &err, AudioDevice *dev=NULL);
 
 #endif // __AudioDevice_h__

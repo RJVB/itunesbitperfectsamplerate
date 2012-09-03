@@ -76,10 +76,10 @@ extern "C" OSStatus iTunesPluginMainMachO( OSType inMessage, PluginMessageInfo *
 
 @interface VisualView : NSView
 {
-	VisualPluginData *	_visualPluginData;
+	BPPluginData *	_pluginData;
 }
 
-@property (nonatomic, assign) VisualPluginData * visualPluginData;
+@property (nonatomic, assign) BPPluginData * pluginData;
 
 -(void)drawRect:(NSRect)dirtyRect;
 - (BOOL)acceptsFirstResponder;
@@ -95,16 +95,16 @@ extern "C" OSStatus iTunesPluginMainMachO( OSType inMessage, PluginMessageInfo *
 //	DrawVisual
 //-------------------------------------------------------------------------------------------------
 //
-void DrawVisual( VisualPluginData * visualPluginData )
+void DrawVisual( BPPluginData * bpPluginData )
 {
 	CGRect			drawRect;
 	CGPoint			where;
 
 	// this shouldn't happen but let's be safe
-	if ( visualPluginData->destView == NULL )
+	if ( bpPluginData->destView == NULL )
 		return;
 
-	drawRect = [visualPluginData->destView bounds];
+	drawRect = [bpPluginData->destView bounds];
 
 	// fill the whole view with black to start
 	[[NSColor blackColor] set];
@@ -117,12 +117,12 @@ void DrawVisual( VisualPluginData * visualPluginData )
 	where.x = (CGFloat)(randomX * drawRect.size.width);
 	where.y = (CGFloat)(randomY * drawRect.size.height);
 
-	if ( visualPluginData->playing )
+	if ( bpPluginData->playing )
 	{
 		// if playing, draw a square whose color is dictated by the current max levels
-		CGFloat		red		= (CGFloat)visualPluginData->maxLevel[1] / 256.0;
-		CGFloat		green	= (CGFloat)visualPluginData->maxLevel[1] / 256.0;
-		CGFloat		blue	= (CGFloat)visualPluginData->maxLevel[0] / 256.0;
+		CGFloat		red		= (CGFloat)bpPluginData->maxLevel[1] / 256.0;
+		CGFloat		green	= (CGFloat)bpPluginData->maxLevel[1] / 256.0;
+		CGFloat		blue	= (CGFloat)bpPluginData->maxLevel[0] / 256.0;
 
 		[[NSColor colorWithDeviceRed:red green:green blue:blue alpha:1] set];
 	}
@@ -139,17 +139,17 @@ void DrawVisual( VisualPluginData * visualPluginData )
 	// should we draw the info/artwork in the bottom-left corner?
 	time_t		theTime = time( NULL );
 
-	if ( theTime < visualPluginData->drawInfoTimeOut )
+	if ( theTime < bpPluginData->drawInfoTimeOut )
 	{
 		where = CGPointMake( 10, 10 );
 
 		// if we have a song title, draw it (prefer the stream title over the regular name if we have it)
 		NSString *				theString = NULL;
 
-		if ( visualPluginData->streamInfo.streamTitle[0] != 0 )
-			theString = [NSString stringWithCharacters:&visualPluginData->streamInfo.streamTitle[1] length:visualPluginData->streamInfo.streamTitle[0]];
-		else if ( visualPluginData->trackInfo.name[0] != 0 )
-			theString = [NSString stringWithCharacters:&visualPluginData->trackInfo.name[1] length:visualPluginData->trackInfo.name[0]];
+		if ( bpPluginData->streamInfo.streamTitle[0] != 0 )
+			theString = [NSString stringWithCharacters:&bpPluginData->streamInfo.streamTitle[1] length:bpPluginData->streamInfo.streamTitle[0]];
+		else if ( bpPluginData->trackInfo.name[0] != 0 )
+			theString = [NSString stringWithCharacters:&bpPluginData->trackInfo.name[1] length:bpPluginData->trackInfo.name[0]];
 		
 		if ( theString != NULL )
 		{
@@ -159,11 +159,11 @@ void DrawVisual( VisualPluginData * visualPluginData )
 		}
 
 		// draw the artwork
-		if ( visualPluginData->currentArtwork != NULL )
+		if ( bpPluginData->currentArtwork != NULL )
 		{
 			where.y += 20;
 
-			[visualPluginData->currentArtwork drawAtPoint:where fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:0.75];
+			[bpPluginData->currentArtwork drawAtPoint:where fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:0.75];
 		}
 	}
 }
@@ -172,34 +172,34 @@ void DrawVisual( VisualPluginData * visualPluginData )
 //	UpdateArtwork
 //-------------------------------------------------------------------------------------------------
 //
-void UpdateArtwork( VisualPluginData * visualPluginData, CFDataRef coverArt, UInt32 coverArtSize, UInt32 coverArtFormat )
+void UpdateArtwork( BPPluginData * bpPluginData, CFDataRef coverArt, UInt32 coverArtSize, UInt32 coverArtFormat )
 {
 	// release current image
-	[visualPluginData->currentArtwork release];
-	visualPluginData->currentArtwork = NULL;
+	[bpPluginData->currentArtwork release];
+	bpPluginData->currentArtwork = NULL;
 	
 	// create 100x100 NSImage* out of incoming CFDataRef if non-null (null indicates there is no artwork for the current track)
 	if ( coverArt != NULL )
 	{
-		visualPluginData->currentArtwork = [[NSImage alloc] initWithData:(NSData *)coverArt];
+		bpPluginData->currentArtwork = [[NSImage alloc] initWithData:(NSData *)coverArt];
 		
-		[visualPluginData->currentArtwork setSize:CGSizeMake( 100, 100 )];
+		[bpPluginData->currentArtwork setSize:CGSizeMake( 100, 100 )];
 	}
 	
-	UpdateInfoTimeOut( visualPluginData );
+	UpdateInfoTimeOut( bpPluginData );
 }
 
 //-------------------------------------------------------------------------------------------------
 //	InvalidateVisual
 //-------------------------------------------------------------------------------------------------
 //
-void InvalidateVisual( VisualPluginData * visualPluginData )
+void InvalidateVisual( BPPluginData * bpPluginData )
 {
-	(void) visualPluginData;
+	(void) bpPluginData;
 
 #if USE_SUBVIEW
 	// when using a custom subview, we invalidate it so we get our own draw calls
-	[visualPluginData->subview setNeedsDisplay:YES];
+	[bpPluginData->subview setNeedsDisplay:YES];
 #endif
 }
 
@@ -207,30 +207,28 @@ void InvalidateVisual( VisualPluginData * visualPluginData )
 //	CreateVisualContext
 //-------------------------------------------------------------------------------------------------
 //
-OSStatus ActivateVisual( VisualPluginData * visualPluginData, VISUAL_PLATFORM_VIEW destView, OptionBits options )
+OSStatus ActivateVisual( BPPluginData * bpPluginData, VISUAL_PLATFORM_VIEW destView, OptionBits options )
 {
 	OSStatus			status = noErr;
 
-	visualPluginData->destView			= destView;
-	visualPluginData->destRect			= [destView bounds];
-	visualPluginData->destOptions		= options;
+	bpPluginData->destView			= destView;
+	bpPluginData->destRect			= [destView bounds];
+	bpPluginData->destOptions		= options;
 
-	UpdateInfoTimeOut( visualPluginData );
+	UpdateInfoTimeOut( bpPluginData );
 
 #if USE_SUBVIEW
 
 	// NSView-based subview
-	visualPluginData->subview = [[VisualView alloc] initWithFrame:visualPluginData->destRect];
-	if ( visualPluginData->subview != NULL )
-	{
-		[visualPluginData->subview setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+	bpPluginData->subview = [[VisualView alloc] initWithFrame:bpPluginData->destRect];
+	if( bpPluginData->subview != NULL ){
+		[bpPluginData->subview setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
 
-		[visualPluginData->subview setVisualPluginData:visualPluginData];
+		[bpPluginData->subview setPluginData:bpPluginData];
 
-		[destView addSubview:visualPluginData->subview];
+		[destView addSubview:bpPluginData->subview];
 	}
-	else
-	{
+	else{
 		status = memFullErr;
 	}
 
@@ -243,10 +241,10 @@ OSStatus ActivateVisual( VisualPluginData * visualPluginData, VISUAL_PLATFORM_VI
 //	MoveVisual
 //-------------------------------------------------------------------------------------------------
 //
-OSStatus MoveVisual( VisualPluginData * visualPluginData, OptionBits newOptions )
+OSStatus MoveVisual( BPPluginData * bpPluginData, OptionBits newOptions )
 {
-	visualPluginData->destRect	  = [visualPluginData->destView bounds];
-	visualPluginData->destOptions = newOptions;
+	bpPluginData->destRect	  = [bpPluginData->destView bounds];
+	bpPluginData->destOptions = newOptions;
 
 	return noErr;
 }
@@ -255,19 +253,19 @@ OSStatus MoveVisual( VisualPluginData * visualPluginData, OptionBits newOptions 
 //	DeactivateVisual
 //-------------------------------------------------------------------------------------------------
 //
-OSStatus DeactivateVisual( VisualPluginData * visualPluginData )
+OSStatus DeactivateVisual( BPPluginData * bpPluginData )
 {
 #if USE_SUBVIEW
-	[visualPluginData->subview removeFromSuperview];
-	[visualPluginData->subview autorelease];
-	visualPluginData->subview = NULL;
-	[visualPluginData->currentArtwork release];
-	visualPluginData->currentArtwork = NULL;
+	[bpPluginData->subview removeFromSuperview];
+	[bpPluginData->subview autorelease];
+	bpPluginData->subview = NULL;
+	[bpPluginData->currentArtwork release];
+	bpPluginData->currentArtwork = NULL;
 #endif
 
-	visualPluginData->destView			= NULL;
-	visualPluginData->destRect			= CGRectNull;
-	visualPluginData->drawInfoTimeOut	= 0;
+	bpPluginData->destView			= NULL;
+	bpPluginData->destRect			= CGRectNull;
+	bpPluginData->drawInfoTimeOut	= 0;
 	
 	return noErr;
 }
@@ -276,9 +274,9 @@ OSStatus DeactivateVisual( VisualPluginData * visualPluginData )
 //	ResizeVisual
 //-------------------------------------------------------------------------------------------------
 //
-OSStatus ResizeVisual( VisualPluginData * visualPluginData )
+OSStatus ResizeVisual( BPPluginData * bpPluginData )
 {
-	visualPluginData->destRect = [visualPluginData->destView bounds];
+	bpPluginData->destRect = [bpPluginData->destView bounds];
 
 	// note: the subview is automatically resized by iTunes so nothing to do here
 
@@ -289,9 +287,9 @@ OSStatus ResizeVisual( VisualPluginData * visualPluginData )
 //	ConfigureVisual
 //-------------------------------------------------------------------------------------------------
 //
-OSStatus ConfigureVisual( VisualPluginData * visualPluginData )
+OSStatus ConfigureVisual( BPPluginData * bpPluginData )
 {
-	(void) visualPluginData;
+	(void) bpPluginData;
 
 	// load nib
 	// show modal dialog
@@ -307,7 +305,7 @@ OSStatus ConfigureVisual( VisualPluginData * visualPluginData )
 
 @implementation VisualView
 
-@synthesize visualPluginData = _visualPluginData;
+@synthesize pluginData = _pluginData;
 
 //-------------------------------------------------------------------------------------------------
 //	isOpaque
@@ -325,9 +323,9 @@ OSStatus ConfigureVisual( VisualPluginData * visualPluginData )
 //
 -(void)drawRect:(NSRect)dirtyRect
 {
-	if ( _visualPluginData != NULL )
+	if ( _pluginData != NULL )
 	{
-		DrawVisual( _visualPluginData );
+		DrawVisual( _pluginData );
 	}
 }
 
@@ -370,7 +368,7 @@ OSStatus ConfigureVisual( VisualPluginData * visualPluginData )
 	// if the 'i' key is pressed, reset the info timeout so that we draw it again
 	if ( [[theEvent charactersIgnoringModifiers] isEqualTo:@"i"] )
 	{
-		UpdateInfoTimeOut( _visualPluginData );
+		UpdateInfoTimeOut( _pluginData );
 		return;
 	}
 

@@ -1,4 +1,14 @@
 //
+// @file		iTunesBPSampleRate.cpp
+// Abstract:	A very simple (non) visual iTunes plugin that retrieves the sample rate of the
+//			content being played and sets the hardware output device to that rate, if possible.
+//			Output device changes are tracked when stopping and starting playback, and
+//			under normal execution and termination the device is always returned to its
+//			initial setting.
+// Version:	1.0
+// Copyright:	2012 RJVB
+
+// Adapted from:
 // File:       iTunesPlugIn.cpp
 //
 // Abstract:   Visual plug-in for iTunes.  Cross-platform code.
@@ -72,38 +82,27 @@ void UpdateInfoTimeOut( BPPluginData * bpPluginData )
 }
 
 //-------------------------------------------------------------------------------------------------
-//	UpdatePulseRate
-//-------------------------------------------------------------------------------------------------
-//
-void UpdatePulseRate( BPPluginData * bpPluginData, UInt32 * ioPulseRate )
-{
-	// vary the pulse rate based on whether or not iTunes is currently playing
-//	if ( bpPluginData->playing )
-//		*ioPulseRate = kPlayingPulseRateInHz;
-//	else
-//		*ioPulseRate = kStoppedPulseRateInHz;
-}
-
-//-------------------------------------------------------------------------------------------------
 //	UpdateTrackInfo
 //-------------------------------------------------------------------------------------------------
 //
 void UpdateTrackInfo( BPStruct *bpData, ITTrackInfo * trackInfo, ITStreamInfo * streamInfo )
-{ BPPluginData *bpPluginData;
+{ BPPluginData *bpPluginData = NULL;
 	if( bpData ){
 		bpPluginData = &bpData->bpPluginData;
-		bpData->defaultADevice->SetNominalSampleRate(trackInfo->sampleRateFloat);
+		if( trackInfo->validFields & kITTISampleRateFieldMask ){
+			bpData->defaultADevice->SetNominalSampleRate(trackInfo->sampleRateFloat);
+		}
 	}
 	else{
 		return;
 	}
-	if( trackInfo != NULL ){
+	if( trackInfo ){
 		bpPluginData->trackInfo = *trackInfo;
 	}
 	else{
 		memset( &bpPluginData->trackInfo, 0, sizeof(bpPluginData->trackInfo) );
 	}
-	if( streamInfo != NULL ){
+	if( streamInfo ){
 		bpPluginData->streamInfo = *streamInfo;
 	}
 	else{
@@ -112,7 +111,8 @@ void UpdateTrackInfo( BPStruct *bpData, ITTrackInfo * trackInfo, ITStreamInfo * 
 
 	UpdateInfoTimeOut( bpPluginData );
 #ifdef DEBUG
-	{ wchar_t fName[257];
+	if( trackInfo ){
+	  wchar_t fName[257];
 		wmemcpy( (wchar_t*) fName, &((wchar_t*) trackInfo->fileName)[1], trackInfo->fileName[0] );
 		fName[trackInfo->fileName[0]] = fName[255] = 0;
 		CFLog( "%S: %g(%u)Hz, %u/%u tracks, %ukbps, %gs, %llu bytes",
@@ -144,8 +144,7 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 
 	status = noErr;
 
-	switch ( message )
-	{
+	switch( message ){
 		/*
 			Sent when the visual plugin is registered.  The plugin should do minimal
 			memory allocations here.
@@ -220,7 +219,7 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			Sent when this visual is no longer displayed.
 		*/
 		case kVisualPluginDeactivateMessage:{
-			UpdateTrackInfo( bpData, NULL, NULL );
+//			UpdateTrackInfo( bpData, NULL, NULL );
 			CFLog( "kVisualPluginDeactivateMessage" );
 
 			break;
@@ -335,8 +334,8 @@ OSStatus RegisterVisualPlugin( PluginMessageInfo *messageInfo, PlayerMessageInfo
 	playerMessageInfo.u.registerVisualPluginMessage.creator			= kTVisualPluginCreator;
 	
 	playerMessageInfo.u.registerVisualPluginMessage.pulseRateInHz		= kStoppedPulseRateInHz;	// update my state N times a second
-	playerMessageInfo.u.registerVisualPluginMessage.numWaveformChannels	= 2;
-	playerMessageInfo.u.registerVisualPluginMessage.numSpectrumChannels	= 2;
+	playerMessageInfo.u.registerVisualPluginMessage.numWaveformChannels	= 0;
+	playerMessageInfo.u.registerVisualPluginMessage.numSpectrumChannels	= 0;
 	
 	playerMessageInfo.u.registerVisualPluginMessage.minWidth			= 64;
 	playerMessageInfo.u.registerVisualPluginMessage.minHeight			= 64;

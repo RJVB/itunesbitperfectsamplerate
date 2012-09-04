@@ -1,5 +1,6 @@
 /*	Copyright � 2007 Apple Inc. All Rights Reserved.
-	
+	Modifications (C) 2012 RJVB
+
 	Disclaimer: IMPORTANT:  This Apple software is supplied to you by 
 			Apple Inc. ("Apple") in consideration of your agreement to the
 			following terms, and your use, installation, modification or
@@ -223,6 +224,9 @@ OSStatus AudioDevice::NominalSampleRate(Float64 &sampleRate)
 OSStatus AudioDevice::SetNominalSampleRate(Float64 sampleRate, Boolean force)
 { UInt32 size = sizeof(Float64);
   OSStatus err;
+	if( sampleRate <= 0 ){
+		return paramErr;
+	}
 	listenerSilentFor = 2;
 	while( sampleRate < minNominalSR && sampleRate*2 <= maxNominalSR ){
 		sampleRate *= 2;
@@ -244,6 +248,9 @@ OSStatus AudioDevice::SetNominalSampleRate(Float64 sampleRate, Boolean force)
 	return err;
 }
 
+/*!
+	Reset the nominal sample rate to the value found when opening the device
+ */
 OSStatus AudioDevice::ResetNominalSampleRate(Boolean force)
 { UInt32 size = sizeof(Float64);
   Float64 sampleRate = mInitialFormat.mSampleRate;

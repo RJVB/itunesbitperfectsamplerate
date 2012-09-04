@@ -74,7 +74,6 @@
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* External Frameworks and Libraries */,
 				19C28FB6FE9D52B211CA2CBB /* Products */,
-				D6B2A50415F3D846007510B7 /* CoreAudio.framework */,
 			);
 			name = iTunesPlugIn;
 			sourceTree = "<group>";
@@ -82,6 +81,7 @@
 		089C1671FE841209C02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				D6B2A50415F3D846007510B7 /* CoreAudio.framework */,
 				DC13014413AB3AB40013DDA5 /* OpenGL.framework */,
 				DC8CE6DE13A31B4500963E07 /* Cocoa.framework */,
 			);

@@ -235,10 +235,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D69E137115F5868800969F20</string>
+						<string>D69E14CA15F6521800969F20</string>
 						<key>history</key>
 						<array>
-							<string>D69E136B15F5867500969F20</string>
+							<string>D69E13B915F6183200969F20</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -254,7 +254,87 @@
 				<key>PBXModuleWindowStatusBarHidden2</key>
 				<false/>
 				<key>RubberWindowFrame</key>
-				<string>15 20 795 854 0 0 1440 878 </string>
+				<string>23 11 795 854 0 0 1440 878 </string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Content</key>
+			<dict>
+				<key>PBXProjectModuleGUID</key>
+				<string>D63223C915F5227300959450</string>
+				<key>PBXProjectModuleLabel</key>
+				<string>iTunesBPSampleRate.cpp</string>
+				<key>PBXSplitModuleInNavigatorKey</key>
+				<dict>
+					<key>Split0</key>
+					<dict>
+						<key>PBXProjectModuleGUID</key>
+						<string>D63223CA15F5227300959450</string>
+						<key>PBXProjectModuleLabel</key>
+						<string>iTunesBPSampleRate.cpp</string>
+						<key>_historyCapacity</key>
+						<integer>0</integer>
+						<key>bookmark</key>
+						<string>D69E14CB15F6521800969F20</string>
+						<key>history</key>
+						<array>
+							<string>D69E138615F5892C00969F20</string>
+						</array>
+					</dict>
+					<key>SplitCount</key>
+					<string>1</string>
+				</dict>
+				<key>StatusBarVisibility</key>
+				<true/>
+			</dict>
+			<key>Geometry</key>
+			<dict>
+				<key>Frame</key>
+				<string>{{0, 20}, {795, 813}}</string>
+				<key>PBXModuleWindowStatusBarHidden2</key>
+				<false/>
+				<key>RubberWindowFrame</key>
+				<string>314 24 795 854 0 0 1440 878 </string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Content</key>
+			<dict>
+				<key>PBXProjectModuleGUID</key>
+				<string>D69E144B15F634BB00969F20</string>
+				<key>PBXProjectModuleLabel</key>
+				<string>iTunesAPI.h</string>
+				<key>PBXSplitModuleInNavigatorKey</key>
+				<dict>
+					<key>Split0</key>
+					<dict>
+						<key>PBXProjectModuleGUID</key>
+						<string>D69E144C15F634BB00969F20</string>
+						<key>PBXProjectModuleLabel</key>
+						<string>iTunesAPI.h</string>
+						<key>_historyCapacity</key>
+						<integer>0</integer>
+						<key>bookmark</key>
+						<string>D69E14CC15F6521800969F20</string>
+						<key>history</key>
+						<array>
+							<string>D69E144D15F634BB00969F20</string>
+						</array>
+					</dict>
+					<key>SplitCount</key>
+					<string>1</string>
+				</dict>
+				<key>StatusBarVisibility</key>
+				<true/>
+			</dict>
+			<key>Geometry</key>
+			<dict>
+				<key>Frame</key>
+				<string>{{0, 20}, {795, 813}}</string>
+				<key>PBXModuleWindowStatusBarHidden2</key>
+				<false/>
+				<key>RubberWindowFrame</key>
+				<string>641 24 795 854 0 0 1440 878 </string>
 			</dict>
 		</dict>
 		<dict>
@@ -275,7 +355,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D69E137215F5868800969F20</string>
+						<string>D69E14CD15F6521800969F20</string>
 						<key>history</key>
 						<array>
 							<string>D69E130415F5822600969F20</string>
@@ -301,46 +381,6 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>D63223C915F5227300959450</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>iTunesBPSampleRate.cpp</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>D63223CA15F5227300959450</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>iTunesBPSampleRate.cpp</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>D69E137315F5868800969F20</string>
-						<key>history</key>
-						<array>
-							<string>D69E130515F5822600969F20</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {795, 813}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>314 24 795 854 0 0 1440 878 </string>
-			</dict>
-		</dict>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
 				<string>D63223CC15F5227300959450</string>
 				<key>PBXProjectModuleLabel</key>
 				<string>iTunesVisualAPI.h</string>
@@ -355,7 +395,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D69E137415F5868800969F20</string>
+						<string>D69E14CE15F6521800969F20</string>
 						<key>history</key>
 						<array>
 							<string>D69E130715F5822600969F20</string>
@@ -452,18 +492,16 @@
 								<string>089C167CFE841241C02AAC07</string>
 								<string>19C28FB6FE9D52B211CA2CBB</string>
 								<string>1C37FBAC04509CD000000102</string>
-								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>7</integer>
-									<integer>2</integer>
+									<integer>17</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 445}}</string>
+							<string>{{0, 135}, {186, 445}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -686,7 +724,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>368412296.72210801</real>
+	<real>368464408.52261102</real>
 	<key>ToolbarConfigUserDefaultsMinorVersion</key>
 	<string>2</string>
 	<key>ToolbarDisplayMode</key>
@@ -703,13 +741,14 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>D64DB2D21591217700B5FB54</string>
 		<string>D63223CC15F5227300959450</string>
-		<string>D63223C915F5227300959450</string>
 		<string>D63223D815F5243000959450</string>
-		<string>/Volumes/Debian/Users/bertin/work/src/MacOSX/iTunesBPSampleRate/iTunesBPSampleRate.xcodeproj</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
+		<string>D69E144B15F634BB00969F20</string>
+		<string>D63223C915F5227300959450</string>
 		<string>D63223E715F524CF00959450</string>
+		<string>/Volumes/Debian/Users/bertin/work/src/MacOSX/iTunesBPSampleRate/iTunesBPSampleRate.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>-823 301 788 504 -1280 100 1280 800 </string>
@@ -931,7 +970,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>AudioDevice.h</string>
+										<string>iTunesPlugInMac.mm</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -997,7 +1036,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

@@ -214,19 +214,19 @@ void CFLog( const char *format, ... )
 //-------------------------------------------------------------------------------------------------
 //
 OSStatus iTunesPluginMainMachO( OSType message, PluginMessageInfo * messageInfo, void * refCon )
-{
-	OSStatus		status;
-	
+{ OSStatus		status;
+  static PlayerMessageInfo playerMessageInfo;
 	(void) refCon;
 	
 	switch ( message )
 	{
 		case kPluginInitMessage:
-			status = RegisterVisualPlugin( messageInfo );
+			status = RegisterVisualPlugin( messageInfo, playerMessageInfo );
 			break;
 			
 		case kPluginCleanupMessage:
 			NSLog( @"kPluginCleanupMessage" );
+//			PlayerUnregisterPlugin( messageInfo->u.initMessage.appCookie, messageInfo->u.initMessage.appProc, &playerMessageInfo );
 			status = noErr;
 			break;
 			

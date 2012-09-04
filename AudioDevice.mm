@@ -62,13 +62,14 @@ OSStatus DefaultListener( AudioDeviceID inDevice, UInt32 inChannel, Boolean isIn
 { UInt32 size;
   Float64 sampleRate;
   AudioDevice *dev = (AudioDevice*) inClientData;
-  NSString *msg = [[NSString alloc] initWithFormat:@"Property %s(%u) of device %u[%u] changed; data=%p",
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  NSString *msg = [NSString stringWithFormat:@"Property %s(%u) of device %u[%u] changed; data=%p",
 		   OSTStr((OSType)inPropertyID), (unsigned int) inPropertyID, (unsigned int)inDevice, (unsigned int)inChannel, inClientData ];
 	switch( inPropertyID ){
 		case kAudioDevicePropertyNominalSampleRate:
 			size = sizeof(Float64);
 			if( AudioDeviceGetProperty( inDevice, 0, isInput, kAudioDevicePropertyNominalSampleRate, &size, &sampleRate ) == noErr
-			   && (dev && dev->listenerVerbose)
+			   && (dev && !dev->listenerSilentFor)
 			){
 				NSLog( @"%@\n\tkAudioDevicePropertyNominalSampleRate=%g\n", msg, sampleRate );
 			}
@@ -76,18 +77,23 @@ OSStatus DefaultListener( AudioDeviceID inDevice, UInt32 inChannel, Boolean isIn
 		case kAudioDevicePropertyActualSampleRate:
 			size = sizeof(Float64);
 			if( AudioDeviceGetProperty( inDevice, 0, isInput, kAudioDevicePropertyActualSampleRate, &size, &sampleRate ) == noErr
-			   && (dev && dev->listenerVerbose)
+			   && (dev && !dev->listenerSilentFor)
 			){
 				NSLog( @"%@\n\tkAudioDevicePropertyActualSampleRate=%g\n", msg, sampleRate );
 			}
 			break;
 		default:
-			if( (dev && dev->listenerVerbose) ){
+			if( (dev && !dev->listenerSilentFor) ){
 				NSLog(msg);
 			}
 			break;
 	}
-	dev->listenerVerbose = true;
+	if( dev && dev->listenerSilentFor ){
+		dev->listenerSilentFor -= 1;
+	}
+	if( pool ){
+		[pool drain];
+	}
 	return noErr;		
 }
 
@@ -103,7 +109,7 @@ void	AudioDevice::Init(AudioDevicePropertyListenerProc lProc=DefaultListener)
 	verify_noerr(AudioDeviceGetProperty(mID, 0, mIsInput, kAudioDevicePropertyBufferFrameSize, &propsize, &mBufferSizeFrames));
 
 	listenerProc = lProc;
-	listenerVerbose = true;
+	listenerSilentFor = 0;
 	AudioDeviceAddPropertyListener( mID, 0, false, kAudioDevicePropertyActualSampleRate, lProc, this );
 	AudioDeviceAddPropertyListener( mID, 0, false, kAudioDevicePropertyNominalSampleRate, lProc, this );
 	AudioDeviceAddPropertyListener( mID, 0, false, kAudioDevicePropertyStreamFormat, lProc, this );
@@ -181,7 +187,7 @@ AudioDevice::~AudioDevice()
 		  char devName[256];
 			GetName( devName, sizeof(devName) );
 			fprintf( stderr, "Cannot reset initial settings for device %u (%s): err %4.4s, %ld\n",
-				   mID, devName, (char*)&err, err );
+				   (unsigned int) mID, devName, (char*)&err, (long) err );
 		}
 		if( listenerProc ){
 			AudioDeviceRemovePropertyListener( mID, 0, false, kAudioDevicePropertyActualSampleRate, listenerProc );
@@ -207,25 +213,24 @@ void	AudioDevice::SetBufferSize(UInt32 size)
 OSStatus AudioDevice::NominalSampleRate(Float64 &sampleRate)
 { UInt32 size = sizeof(Float64);
   OSStatus err;
-  listenerVerbose = false;
-  err = AudioDeviceGetProperty( mID, 0, mIsInput, kAudioDevicePropertyNominalSampleRate, &size, &sampleRate );
-  if( err == noErr ){
-	  currentNominalSR = sampleRate;
-  }
-  return err;
+	err = AudioDeviceGetProperty( mID, 0, mIsInput, kAudioDevicePropertyNominalSampleRate, &size, &sampleRate );
+	if( err == noErr ){
+		currentNominalSR = sampleRate;
+	}
+	return err;
 }
 
 OSStatus AudioDevice::SetNominalSampleRate(Float64 sampleRate, Boolean force)
 { UInt32 size = sizeof(Float64);
   OSStatus err;
-	listenerVerbose = false;
+	listenerSilentFor = 2;
 	while( sampleRate < minNominalSR && sampleRate*2 <= maxNominalSR ){
 		sampleRate *= 2;
-		listenerVerbose = true;
+		listenerSilentFor = 0;
 	}
 	while( sampleRate > maxNominalSR && sampleRate/2 >= minNominalSR ){
 		sampleRate /= 2;
-		listenerVerbose = true;
+		listenerSilentFor = 0;
 	}
 	if( sampleRate != currentNominalSR || force ){
 		err = AudioDeviceSetProperty( mID, NULL, 0, mIsInput, kAudioDevicePropertyNominalSampleRate, size, &sampleRate );
@@ -244,7 +249,7 @@ OSStatus AudioDevice::ResetNominalSampleRate(Boolean force)
   Float64 sampleRate = mInitialFormat.mSampleRate;
   OSStatus err = noErr;
 	if( sampleRate != currentNominalSR || force ){
-		listenerVerbose = false;
+		listenerSilentFor = 2;
 		err = AudioDeviceSetProperty( mID, NULL, 0, mIsInput, kAudioDevicePropertyNominalSampleRate, size, &sampleRate );
 		if( err == noErr ){
 			currentNominalSR = sampleRate;
@@ -256,7 +261,7 @@ OSStatus AudioDevice::ResetNominalSampleRate(Boolean force)
 OSStatus AudioDevice::SetStreamBasicDescription(AudioStreamBasicDescription *desc)
 { UInt32 size = sizeof(AudioStreamBasicDescription);
   OSStatus err;
-	listenerVerbose = false;
+	listenerSilentFor = 1;
 	err = AudioDeviceSetProperty( mID, NULL, 0, mIsInput, kAudioDevicePropertyStreamFormat, size, desc );
 	if( err == noErr ){
 		currentNominalSR = desc->mSampleRate;

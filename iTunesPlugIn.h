@@ -114,7 +114,7 @@ typedef struct BPPluginData BPPluginData;
 
 void		GetVisualName( ITUniStr255 name );
 OptionBits	GetVisualOptions( void );
-OSStatus	RegisterVisualPlugin( PluginMessageInfo * messageInfo );
+OSStatus RegisterVisualPlugin( PluginMessageInfo *messageInfo, PlayerMessageInfo &playerMessageInfo );
 
 void		ProcessRenderData( BPPluginData * bpPluginData, UInt32 timeStampID, const RenderVisualData * renderData );
 void		UpdateInfoTimeOut( BPPluginData * bpPluginData );

@@ -320,10 +320,8 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 //	RegisterVisualPlugin
 //-------------------------------------------------------------------------------------------------
 //
-OSStatus RegisterVisualPlugin( PluginMessageInfo * messageInfo )
-{
-	PlayerMessageInfo	playerMessageInfo;
-	OSStatus			status;
+OSStatus RegisterVisualPlugin( PluginMessageInfo *messageInfo, PlayerMessageInfo &playerMessageInfo )
+{ OSStatus status;
 		
 	memset( &playerMessageInfo.u.registerVisualPluginMessage, 0, sizeof(playerMessageInfo.u.registerVisualPluginMessage) );
 
@@ -331,19 +329,19 @@ OSStatus RegisterVisualPlugin( PluginMessageInfo * messageInfo )
 
 	SetNumVersion( &playerMessageInfo.u.registerVisualPluginMessage.pluginVersion, kTVisualPluginMajorVersion, kTVisualPluginMinorVersion, kTVisualPluginReleaseStage, kTVisualPluginNonFinalRelease );
 
-	playerMessageInfo.u.registerVisualPluginMessage.options					= 0; /*GetVisualOptions();*/
-	playerMessageInfo.u.registerVisualPluginMessage.handler					= (VisualPluginProcPtr)VisualPluginHandler;
-	playerMessageInfo.u.registerVisualPluginMessage.registerRefCon			= 0;
-	playerMessageInfo.u.registerVisualPluginMessage.creator					= kTVisualPluginCreator;
+	playerMessageInfo.u.registerVisualPluginMessage.options			= 0; /*GetVisualOptions();*/
+	playerMessageInfo.u.registerVisualPluginMessage.handler			= (VisualPluginProcPtr)VisualPluginHandler;
+	playerMessageInfo.u.registerVisualPluginMessage.registerRefCon		= 0;
+	playerMessageInfo.u.registerVisualPluginMessage.creator			= kTVisualPluginCreator;
 	
-	playerMessageInfo.u.registerVisualPluginMessage.pulseRateInHz			= kStoppedPulseRateInHz;	// update my state N times a second
-	playerMessageInfo.u.registerVisualPluginMessage.numWaveformChannels		= 2;
-	playerMessageInfo.u.registerVisualPluginMessage.numSpectrumChannels		= 2;
+	playerMessageInfo.u.registerVisualPluginMessage.pulseRateInHz		= kStoppedPulseRateInHz;	// update my state N times a second
+	playerMessageInfo.u.registerVisualPluginMessage.numWaveformChannels	= 2;
+	playerMessageInfo.u.registerVisualPluginMessage.numSpectrumChannels	= 2;
 	
-	playerMessageInfo.u.registerVisualPluginMessage.minWidth				= 64;
-	playerMessageInfo.u.registerVisualPluginMessage.minHeight				= 64;
-	playerMessageInfo.u.registerVisualPluginMessage.maxWidth				= 0;	// no max width limit
-	playerMessageInfo.u.registerVisualPluginMessage.maxHeight				= 0;	// no max height limit
+	playerMessageInfo.u.registerVisualPluginMessage.minWidth			= 64;
+	playerMessageInfo.u.registerVisualPluginMessage.minHeight			= 64;
+	playerMessageInfo.u.registerVisualPluginMessage.maxWidth			= 0;	// no max width limit
+	playerMessageInfo.u.registerVisualPluginMessage.maxHeight			= 0;	// no max height limit
 	
 	status = PlayerRegisterVisualPlugin( messageInfo->u.initMessage.appCookie, messageInfo->u.initMessage.appProc, &playerMessageInfo );
 		

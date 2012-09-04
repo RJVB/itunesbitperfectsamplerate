@@ -80,7 +80,7 @@ public:
 	UInt32						mSafetyOffset;
 	UInt32						mBufferSizeFrames;
 	AudioStreamBasicDescription		mFormat;	
-	Boolean						listenerVerbose;
+	UInt32						listenerSilentFor;
 };
 
 

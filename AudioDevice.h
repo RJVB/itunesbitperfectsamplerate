@@ -62,6 +62,7 @@ public:
 
 	void	SetBufferSize(UInt32 size);
 	OSStatus NominalSampleRate(Float64 &sampleRate);
+	inline Float64 ClosestNominalSampleRate(Float64 sampleRate);
 	OSStatus SetNominalSampleRate(Float64 sampleRate, Boolean force=false);
 	OSStatus ResetNominalSampleRate(Boolean force=false);
 	OSStatus SetStreamBasicDescription(AudioStreamBasicDescription *desc);
@@ -73,7 +74,8 @@ protected:
 	Float64						currentNominalSR;
 	Float64						minNominalSR, maxNominalSR;
 	UInt32						nominalSampleRates;
-	AudioValueRange				*nominalSampleRateList;
+	Float64						*nominalSampleRateList;
+	bool							discreteSampleRateList;
 public:
 	const AudioDeviceID				mID;
 	const bool					mIsInput;

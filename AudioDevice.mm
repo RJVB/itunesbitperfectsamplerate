@@ -98,6 +98,14 @@ OSStatus DefaultListener( AudioDeviceID inDevice, UInt32 inChannel, Boolean isIn
 	return noErr;		
 }
 
+// the sample rates that can be found in the selections proposed by Audio Midi Setup. Are these representative
+// for the devices I have at my disposal, or are they determined by discrete supported values hardcoded into
+// CoreAudio or the HAL? Is there any advantage in using one of these rates, as opposed to using a different rate
+// on devices that support any rate in an interval?
+static Float64 supportedSRateList[] = {6400, 8000, 11025, 12000, 16000, 22050,
+	24000, 32000, 44100, 48000, 64000, 88200, 96000, 128000, 176400, 192000};
+static UInt32 supportedSRates = sizeof(supportedSRateList)/sizeof(Float64);
+
 void	AudioDevice::Init(AudioDevicePropertyListenerProc lProc=DefaultListener)
 {  UInt32 propsize;
 
@@ -121,36 +129,88 @@ void	AudioDevice::Init(AudioDevicePropertyListenerProc lProc=DefaultListener)
 	verify_noerr(AudioDeviceGetProperty(mID, 0, mIsInput, kAudioDevicePropertyStreamFormat, &propsize, &mInitialFormat));
 	mFormat = mInitialFormat;
 	propsize = 0;
+	// attempt to build a list of the supported sample rates
 	if( AudioDeviceGetProperty( mID, 0, false, kAudioDevicePropertyAvailableNominalSampleRates, &propsize, NULL ) == noErr ){
+	  AudioValueRange *list;
+		// use a fall-back value of 100 supported rates:
 		if( propsize == 0 ){
 			propsize = 100 * sizeof(AudioValueRange);
 		}
-		if( (nominalSampleRateList = (AudioValueRange*) calloc( 1, propsize )) ){
-		  OSStatus err = AudioDeviceGetProperty( mID, 0, false, kAudioDevicePropertyAvailableNominalSampleRates, &propsize, nominalSampleRateList );
-			if( err ){
-				free( nominalSampleRateList );
-			}
-			else{
+		if( (list = (AudioValueRange*) calloc( 1, propsize )) ){
+		  OSStatus err = AudioDeviceGetProperty( mID, 0, false, kAudioDevicePropertyAvailableNominalSampleRates, &propsize, list );
+			if( err == noErr ){
 			  UInt32 i;
 			  char name[256];
-				if( propsize != 100 * sizeof(AudioValueRange) ){
-					nominalSampleRateList = (AudioValueRange*) realloc( nominalSampleRateList, propsize );
-				}
-				nominalSampleRates = propsize / sizeof(AudioValueRange);
-				minNominalSR = nominalSampleRateList[0].mMinimum;
-				maxNominalSR = nominalSampleRateList[0].mMaximum;
-				for( i = 1 ; i < nominalSampleRates ; i++ ){
-					if( minNominalSR > nominalSampleRateList[i].mMinimum ){
-						minNominalSR = nominalSampleRateList[i].mMinimum;
-					}
-					if( maxNominalSR < nominalSampleRateList[i].mMaximum ){
-						maxNominalSR = nominalSampleRateList[i].mMaximum;
-					}
-				}
+			  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+			  NSMutableArray *a = [NSMutableArray arrayWithCapacity:nominalSampleRates];
 				name[0] = '\0';
 				GetName( name, sizeof(name) );
-				NSLog( @"Using audio device %u \"%s\", sample rate range [%g,%g]", mID, name, minNominalSR, maxNominalSR );
+				nominalSampleRates = propsize / sizeof(AudioValueRange);
+				a = [NSMutableArray arrayWithCapacity:nominalSampleRates];
+				minNominalSR = list[0].mMinimum;
+				maxNominalSR = list[0].mMaximum;
+				// store the returned sample rates in [a] and record the extreme values
+				for( i = 0 ; i < nominalSampleRates ; i++ ){
+					if( minNominalSR > list[i].mMinimum ){
+						minNominalSR = list[i].mMinimum;
+					}
+					if( maxNominalSR < list[i].mMaximum ){
+						maxNominalSR = list[i].mMaximum;
+					}
+					if( a ){
+						if( list[i].mMinimum != list[i].mMaximum ){
+						  UInt32 j;
+							discreteSampleRateList = false;
+							// the 'guessing' case: the device specifies one or more ranges, without
+							// indicating which rates in that range(s) are supported. We assume the
+							// rates that Audio Midi Setup shows.
+							for( j = 0 ; j < supportedSRates ; j++ ){
+								if( supportedSRateList[j] >= list[i].mMinimum
+								   && supportedSRateList[j] <= list[i].mMaximum
+								){
+									[a addObject:[NSNumber numberWithDouble:supportedSRateList[j]]];
+								}
+							}
+						}
+						else{
+							// there's at least one part of the sample rate list that contains discrete
+							// supported values. I don't know if there are devices that "do this" or if they all
+							// either give discrete rates or a single continuous range. So we take the easy
+							// opt-out solution: this only costs a few cycles attempting to match a requested
+							// non-listed rate (with the potential "risk" of matching to a listed integer multiple,
+							// which should not cause any aliasing).
+							discreteSampleRateList = true;
+							// the easy case: the device specifies one or more discrete rates
+							if( ![a containsObject:[NSNumber numberWithDouble:list[i].mMinimum]] ){
+								[a addObject:[NSNumber numberWithDouble:list[i].mMinimum]];
+							}
+						}
+					}
+				}
+				if( a ){
+					// sort the array (should be the case but one never knows)
+					[a sortUsingSelector:@selector(compare:)];
+					// retrieve the number of unique rates:
+					nominalSampleRates = [a count];
+					// now copy the rates into a simple C array for faster access
+					if( (nominalSampleRateList = new Float64[nominalSampleRates]) ){
+						for( i = 0 ; i < nominalSampleRates ; i++ ){
+							nominalSampleRateList[i] = [[a objectAtIndex:i] doubleValue];
+						}
+					}
+					NSLog( @"Using audio device %u \"%s\", %u sample rates in %u range(s); [%g,%g] %@",
+						 mID, name, nominalSampleRates, propsize / sizeof(AudioValueRange),
+						 minNominalSR, maxNominalSR, (discreteSampleRateList)? [a description] : @"continuous" );
+				}
+				else{
+					NSLog( @"Using audio device %u \"%s\", %u sample rates in %u range(s); [%g,%g] %s",
+						 mID, name, nominalSampleRates, propsize / sizeof(AudioValueRange),
+						 minNominalSR, maxNominalSR, (discreteSampleRateList)? "" : "continuous" );
+				}
+				// [a] will be flushed down the drain:
+				[pool drain];
 			}
+			free(list);
 		}
 	}
 }
@@ -197,7 +257,7 @@ AudioDevice::~AudioDevice()
 			AudioDeviceRemovePropertyListener( mID, 0, false, kAudioDevicePropertyBufferFrameSize, listenerProc );
 		}
 		if( nominalSampleRateList ){
-			free(nominalSampleRateList);
+			delete nominalSampleRateList;
 		}
 	}
 }
@@ -221,6 +281,43 @@ OSStatus AudioDevice::NominalSampleRate(Float64 &sampleRate)
 	return err;
 }
 
+inline Float64 AudioDevice::ClosestNominalSampleRate(Float64 sampleRate)
+{
+	if( sampleRate > 0 ){
+		if( nominalSampleRateList && !discreteSampleRateList ){
+			UInt32 i;
+			Float64 fact;
+			for( i = 0 ; i < nominalSampleRates ; i++ ){
+				// check if we have a hit:
+				if( sampleRate == nominalSampleRateList[i] ){
+					goto done;
+				}
+				// no hit, check if the rate at i is an integer multiple
+				// of the requested sample rate. If so, use rate[i] ; we
+				// can be sure that no rate[i+n] will match sampleRate
+				fact = nominalSampleRateList[i] / sampleRate;
+				if( ((Float64)((UInt32)fact)) == fact ){
+					sampleRate = nominalSampleRateList[i];
+					listenerSilentFor = 0;
+					goto done;
+				}
+			}
+		}
+		// if we're here it's either because there's no list of known supported rates,
+		// or we didn't find an integer multiple of the requested rate in the list.
+		while( sampleRate < minNominalSR && sampleRate*2 <= maxNominalSR ){
+			sampleRate *= 2;
+			listenerSilentFor = 0;
+		}
+		while( sampleRate > maxNominalSR && sampleRate/2 >= minNominalSR ){
+			sampleRate /= 2;
+			listenerSilentFor = 0;
+		}
+	}
+done:
+	return sampleRate;
+}
+
 OSStatus AudioDevice::SetNominalSampleRate(Float64 sampleRate, Boolean force)
 { UInt32 size = sizeof(Float64);
   OSStatus err;
@@ -228,14 +325,7 @@ OSStatus AudioDevice::SetNominalSampleRate(Float64 sampleRate, Boolean force)
 		return paramErr;
 	}
 	listenerSilentFor = 2;
-	while( sampleRate < minNominalSR && sampleRate*2 <= maxNominalSR ){
-		sampleRate *= 2;
-		listenerSilentFor = 0;
-	}
-	while( sampleRate > maxNominalSR && sampleRate/2 >= minNominalSR ){
-		sampleRate /= 2;
-		listenerSilentFor = 0;
-	}
+	sampleRate = ClosestNominalSampleRate(sampleRate);
 	if( sampleRate != currentNominalSR || force ){
 		err = AudioDeviceSetProperty( mID, NULL, 0, mIsInput, kAudioDevicePropertyNominalSampleRate, size, &sampleRate );
 		if( err == noErr ){

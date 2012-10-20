@@ -285,8 +285,8 @@ inline Float64 AudioDevice::ClosestNominalSampleRate(Float64 sampleRate)
 {
 	if( sampleRate > 0 ){
 		if( nominalSampleRateList && !discreteSampleRateList ){
-			UInt32 i;
-			Float64 fact;
+		  UInt32 i;
+		  Float64 fact;
 			for( i = 0 ; i < nominalSampleRates ; i++ ){
 				// check if we have a hit:
 				if( sampleRate == nominalSampleRateList[i] ){

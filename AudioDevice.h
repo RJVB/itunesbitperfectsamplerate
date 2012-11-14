@@ -71,6 +71,7 @@ public:
 protected:
 	AudioStreamBasicDescription		mInitialFormat;
 	AudioDevicePropertyListenerProc	listenerProc;
+	OSStatus						GetPropertyDataSize( AudioObjectPropertySelector property, UInt32 *size );
 	Float64						currentNominalSR;
 	Float64						minNominalSR, maxNominalSR;
 	UInt32						nominalSampleRates;

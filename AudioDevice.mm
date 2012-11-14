@@ -130,7 +130,7 @@ void	AudioDevice::Init(AudioDevicePropertyListenerProc lProc=DefaultListener)
 	mFormat = mInitialFormat;
 	propsize = 0;
 	// attempt to build a list of the supported sample rates
-	if( AudioDeviceGetProperty( mID, 0, false, kAudioDevicePropertyAvailableNominalSampleRates, &propsize, NULL ) == noErr ){
+	if( GetPropertyDataSize( kAudioDevicePropertyAvailableNominalSampleRates, &propsize ) == noErr ){
 	  AudioValueRange *list;
 		// use a fall-back value of 100 supported rates:
 		if( propsize == 0 ){
@@ -366,12 +366,23 @@ OSStatus AudioDevice::SetStreamBasicDescription(AudioStreamBasicDescription *des
 	return err;
 }
 
+// AudioDeviceGetPropertyInfo() is deprecated, so we wrap AudioObjectGetPropertyDataSize().
+OSStatus AudioDevice::GetPropertyDataSize( AudioObjectPropertySelector property, UInt32 *size )
+{ AudioObjectPropertyAddress propertyAddress;
+	propertyAddress.mSelector = property;
+	propertyAddress.mScope = (mIsInput)? kAudioDevicePropertyScopeInput : kAudioDevicePropertyScopeOutput;
+	propertyAddress.mElement = kAudioObjectPropertyElementMaster;
+
+	return AudioObjectGetPropertyDataSize( mID, &propertyAddress, 0, NULL, size );
+//	return AudioDeviceGetPropertyInfo(mID, 0, mIsInput, property, size, NULL);
+}
+
 int AudioDevice::CountChannels()
 { OSStatus err;
   UInt32 propSize;
   int result = 0;
 	
-	err = AudioDeviceGetPropertyInfo(mID, 0, mIsInput, kAudioDevicePropertyStreamConfiguration, &propSize, NULL);
+	err = GetPropertyDataSize( kAudioDevicePropertyStreamConfiguration, &propSize );
 	if (err) return 0;
 
 	AudioBufferList *buflist = (AudioBufferList *)malloc(propSize);

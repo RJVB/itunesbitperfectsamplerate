@@ -46,7 +46,6 @@
 */ 
 
 #include "AudioDevice.h"
-#include "AudioDeviceList.h"
 #import <Cocoa/Cocoa.h>
 
 char *OSTStr( OSType type )

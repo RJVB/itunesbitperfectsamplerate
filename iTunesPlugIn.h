@@ -58,7 +58,7 @@
 //-------------------------------------------------------------------------------------------------
 //	build flags
 //-------------------------------------------------------------------------------------------------
-#define USE_SUBVIEW						(TARGET_OS_MAC && 1)		// use a custom NSView subview on the Mac
+//#define USE_SUBVIEW						(TARGET_OS_MAC && 1)		// use a custom NSView subview on the Mac
 
 //-------------------------------------------------------------------------------------------------
 //	typedefs, structs, enums, etc.
@@ -67,9 +67,9 @@
 #define	kTVisualPluginCreator			'hook'
 
 #define	kTVisualPluginMajorVersion		2
-#define	kTVisualPluginMinorVersion		0
-#define	kTVisualPluginReleaseStage		developStage
-#define	kTVisualPluginNonFinalRelease	0
+#define	kTVisualPluginMinorVersion		5
+#define	kTVisualPluginReleaseStage		finalStage
+#define	kTVisualPluginNonFinalRelease	1
 
 struct BPPluginData;
 
@@ -86,8 +86,8 @@ struct BPPluginData;
 #endif
 
 #define kInfoTimeOutInSeconds		10							// draw info/artwork for N seconds when it changes or playback starts
-#define kPlayingPulseRateInHz		10							// when iTunes is playing, draw N times a second
-#define kStoppedPulseRateInHz		5							// when iTunes is not playing, draw N times a second
+#define kPlayingPulseRateInHz		1							// when iTunes is playing, draw N times a second
+#define kStoppedPulseRateInHz		0							// when iTunes is not playing, draw N times a second
 
 struct BPPluginData
 {

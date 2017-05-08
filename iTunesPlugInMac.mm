@@ -61,7 +61,7 @@
 //	constants, etc.
 //-------------------------------------------------------------------------------------------------
 
-#define kTVisualPluginName              CFSTR("iTunes BitPerfect SampleRate")
+#define kTVisualPluginName              CFSTR("iTunes BitPerfect SampleRate (audio only)")
 
 //-------------------------------------------------------------------------------------------------
 //	exported function prototypes
@@ -107,7 +107,7 @@ extern "C" OSStatus iTunesPluginMainMachO( OSType inMessage, PluginMessageInfo *
 - (BOOL)isOpaque
 {
 	// your custom views should always be opaque or iTunes will waste CPU time drawing behind you
-	return YES;
+	return NO;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ void GetVisualName( ITUniStr255 name )
 //
 OptionBits GetVisualOptions( void )
 {
-	OptionBits		options = (kVisualSupportsMuxedGraphics | kVisualWantsIdleMessages | kVisualWantsConfigure);
+	OptionBits		options = 0 /*kVisualSupportsMuxedGraphics | kVisualWantsIdleMessages | kVisualWantsConfigure*/;
 	
 #if USE_SUBVIEW
 	options |= kVisualUsesSubview;

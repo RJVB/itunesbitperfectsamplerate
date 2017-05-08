@@ -206,6 +206,7 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			the kVisualWantsConfigure option in the RegisterVisualMessage.options field.
 		*/
 		case kVisualPluginConfigureMessage:{
+            status = unimpErr;
 			break;
 		}
 		/*
@@ -213,6 +214,7 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			point, the plugin should allocate any large buffers it needs.
 		*/
 		case kVisualPluginActivateMessage:{
+            status = unimpErr;
 			break;
 		}	
 		/*
@@ -221,13 +223,14 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 		case kVisualPluginDeactivateMessage:{
 //			UpdateTrackInfo( bpData, NULL, NULL );
 			CFLog( "kVisualPluginDeactivateMessage" );
-
+            status = unimpErr;
 			break;
 		}
 		/*
 			Sent when iTunes is moving the destination view to a new parent window (e.g. to/from fullscreen).
 		*/
 		case kVisualPluginWindowChangedMessage:{
+            status = unimpErr;
 			break;
 		}
 		/*
@@ -235,6 +238,7 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			Note: for custom NSView subviews, the subview's frame is automatically resized.
 		*/
 		case kVisualPluginFrameChangedMessage:{
+            status = unimpErr;
 			break;
 		}
 		/*
@@ -245,9 +249,9 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			will allow drawing to support spectral analysis-type plugins but drawing
 			will be limited to the system refresh rate.
 		*/
-		case kVisualPluginPulseMessage:{
-			break;
-		}
+//		case kVisualPluginPulseMessage:{
+//			break;
+//		}
 		/*
 			It's time for the plugin to draw a new frame.
 			
@@ -275,6 +279,7 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			Sent when the player changes the current track information.  This
 			is used when the information about a track changes.
 		*/
+        case kVisualPluginPulseMessage:
 		case kVisualPluginChangeTrackMessage:{
 			UpdateTrackInfo( bpData, messageInfo->u.changeTrackMessage.trackInfo, messageInfo->u.changeTrackMessage.streamInfo );
 
@@ -285,6 +290,7 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			Note that NULL for messageInfo->u.coverArtMessage.coverArt means the currently playing song has no artwork.
 		*/
 		case kVisualPluginCoverArtMessage:{
+            status = unimpErr;
 			break;
 		}
 		/*
@@ -304,6 +310,7 @@ static OSStatus VisualPluginHandler(OSType message, VisualPluginMessageInfo *mes
 			Sent when the player changes the playback position.
 		*/
 		case kVisualPluginSetPositionMessage:{
+            status = unimpErr;
 			break;
 		}
 		default:{

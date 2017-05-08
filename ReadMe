@@ -1,0 +1,13 @@
+About iTunes BitPerfect SampleRate
+version: 2.5
+last modified: May, 2017
+A simple plugin for the Mac version of iTunes that sets the current audio device's sample rate to match the playing content.
+To use, build, drag the bundle into "~/Library/iTunes/iTunes Plug-ins" and select it in the View/Visualiser menu after
+restarting iTunes.
+
+Version History
+May 2017- replaced deprecate API calls with their modern equivalents. The listener feature no longer works it seems (OS X 10.9)
+9/03/12-Version 1.0 adapted from Apple's iTunesVisualPlugin example, (c) RJVB
+7/18/11-Version 2.0
+4/19/07-Updated to XCode
+6/4/01-Ported

@@ -1,0 +1,6 @@
+build
+iTunesPlugIn.userprefs
+.DS_Store
+.hg
+.hgignore
+*.bundle

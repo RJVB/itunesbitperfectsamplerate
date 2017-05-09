@@ -64,7 +64,7 @@
 #include <string.h>
 #include <wchar.h>
 
-#include "AudioDeviceList.h"
+#include "AudioDevice.h"
 
 typedef struct BPStruct {
 	BPPluginData bpPluginData;

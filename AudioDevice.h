@@ -1,6 +1,6 @@
 /*
      File: AudioDevice.h 
- Abstract: CAPlayThough Classes. 
+ Adapted from the CAPlayThough example
   Version: 1.2.2 
   
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
@@ -41,7 +41,8 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
  POSSIBILITY OF SUCH DAMAGE. 
   
- Copyright (C) 2013 Apple Inc. All Rights Reserved. 
+ Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 René J.V. Bertin All Rights Reserved.
   
 */
 /*=============================================================================
@@ -79,14 +80,16 @@ using AudioPropertyListenerProc = AudioDevicePropertyListenerProc;
 using AudioPropertyListenerProc = AudioObjectPropertyListenerProc;
 #endif
 
+class AudioDeviceList;
+
 class AudioDevice {
 public:
-    AudioDevice();
-    AudioDevice(AudioDeviceID devid, bool isInput);
-	AudioDevice(AudioDeviceID devid, bool isInput, AudioPropertyListenerProc lProc);
+	AudioDevice();
+	AudioDevice(AudioDeviceID devid, bool isInput=false);
+	AudioDevice(AudioDeviceID devid, AudioPropertyListenerProc lProc, bool isInput=false);
 	~AudioDevice();
 
-    void Init(AudioPropertyListenerProc lProc);
+	void Init(AudioPropertyListenerProc lProc);
 
 	bool Valid() { return mID != kAudioDeviceUnknown; }
 
@@ -98,26 +101,48 @@ public:
 	OSStatus SetStreamBasicDescription(AudioStreamBasicDescription *desc);
 	int CountChannels();
 	char *GetName(char *buf=NULL, UInt32 maxlen=0);
+
 	void SetInitialNominalSampleRate(Float64 sampleRate)
 	{
 		mInitialFormat.mSampleRate = sampleRate;
 	}
+
+    Float64 CurrentNominalSampleRate()
+    {
+        return currentNominalSR;
+    }
+
+	AudioDeviceID ID()
+	{
+		return mID;
+	}
+
+	static AudioDevice *GetDefaultDevice(Boolean forInput, OSStatus &err, AudioDevice *dev=NULL);
+	static AudioDevice *GetDevice(AudioDeviceID devId, Boolean forInput, AudioDevice *dev=NULL);
+
 protected:
-	AudioStreamBasicDescription		mInitialFormat;
-	AudioPropertyListenerProc		listenerProc;
-	OSStatus						GetPropertyDataSize( AudioObjectPropertySelector property, UInt32 *size, AudioObjectPropertyAddress *propertyAddress=NULL );
-	Float64                         currentNominalSR;
-	Float64                         minNominalSR, maxNominalSR;
-	UInt32                          nominalSampleRates;
-	Float64                         *nominalSampleRateList;
-	bool							discreteSampleRateList;
+	AudioDevice(AudioDeviceID devid, bool quick, bool isInput);
+	AudioStreamBasicDescription mInitialFormat;
+	AudioPropertyListenerProc listenerProc;
+	OSStatus GetPropertyDataSize( AudioObjectPropertySelector property, UInt32 *size, AudioObjectPropertyAddress *propertyAddress=NULL );
+	Float64 currentNominalSR;
+	Float64 minNominalSR, maxNominalSR;
+	UInt32 nominalSampleRates;
+	Float64 *nominalSampleRateList = NULL;
+	bool discreteSampleRateList;
+	const AudioDeviceID mID;
+	const bool mForInput;
+	UInt32 mSafetyOffset;
+	UInt32 mBufferSizeFrames;
+	AudioStreamBasicDescription mFormat;
+	char mDevName[256] = "";
+
+	bool mInitialised = false;
+
+friend class AudioDeviceList;
+
 public:
-	const AudioDeviceID				mID;
-	const bool                      mIsInput;
-	UInt32                          mSafetyOffset;
-	UInt32                          mBufferSizeFrames;
-	AudioStreamBasicDescription		mFormat;	
-	UInt32                          listenerSilentFor;
+	UInt32 listenerSilentFor;
 };
 
 

@@ -1,6 +1,6 @@
 /*
      File: AudioDeviceList.h 
- Abstract: CAPlayThough Classes. 
+ Adapted from the CAPlayThough example
   Version: 1.2.2 
   
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
@@ -42,6 +42,7 @@
  POSSIBILITY OF SUCH DAMAGE. 
   
  Copyright (C) 2013 Apple Inc. All Rights Reserved. 
+ Copyright (C) 2017 René J.V. Bertin All Rights Reserved.
   
 */
 /*=============================================================================
@@ -60,12 +61,12 @@
 class AudioDeviceList {
 public:
 	struct Device {
-		char			mName[64];
-		AudioDeviceID	mID;
+		char mName[256];
+		AudioDeviceID mID;
 	};
 	typedef std::vector<Device> DeviceList;
 
-	AudioDeviceList(bool inputs);
+	AudioDeviceList(bool forInput=false);
 	~AudioDeviceList();
 
 	DeviceList &GetList() { return mDevices; }
@@ -75,7 +76,7 @@ protected:
 	void		BuildList();
 	void		EraseList();
 
-	bool		mInputs;
+	bool		mForInput;
 	DeviceList	mDevices;
 	
 };
